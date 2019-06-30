@@ -411,7 +411,7 @@ game.init_board()
 @app.route("/minhavez")
 def minhavez():
     player = int(q['player'][0])
-    
+
     if request.args.get('format') == "json":
         if game.player != player:
             return jsonify("-1")
@@ -422,7 +422,7 @@ def minhavez():
             return "-1"
         else:
             return "1"
-    
+
 @app.route("/jogador")
 def jogador():
     if request.args.get('format') == "json":
@@ -443,7 +443,7 @@ def tabuleiro():
         return jsonify(game.board)
     else:
         return str(game.board)
-        
+
 
 @app.route("/movimentos")
 def movimentos():
@@ -452,14 +452,12 @@ def movimentos():
     else:
         return str(game.get_available_moves())
 
-
 @app.route("/num_movimentos")
 def num_movimentos():
     if request.args.get('format') == "json":
         return jsonify(game.movements)
     else:
         return str(game.movements)
-
 
 @app.route("/ultima_jogada")
 def ultima_jogada():
