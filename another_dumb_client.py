@@ -138,39 +138,39 @@ def get_board():
 # Função que diz o que tem nas diagonais e seus pontos
 def diagonals(board_inicial, ponto_inicial, board):
 
-    print('Ponto Atual')
-    print(ponto_inicial)
+    # print('Ponto Atual')
+    # print(ponto_inicial)
     # Conteúdo das diagonais
-    superior_esquerda = []
+    # superior_esquerda = []
     superior_direita = []
-    inferior_esquerda = []
+    # inferior_esquerda = []
     inferior_direita = []
     # Pontos das diagonais
-    pontos_superior_esquerda = []
-    pontos_superior_direita = []
-    pontos_inferior_esquerda = []
-    pontos_inferior_direita = []
+    # pontos_superior_esquerda = []
+    # pontos_superior_direita = []
+    # pontos_inferior_esquerda = []
+    # pontos_inferior_direita = []
 
-    valid = True
-    ponto_atual = ponto_inicial
-    # Diagonal superior esquerda
-    while valid:
-        # Se está no meio do tabuleiro ou na esquerda
-        if ponto_atual[0] == 6 or ponto_atual[0] < 6:
-            ponto_atual = (ponto_atual[0] - 1, ponto_atual[1] -1)
-            if not ponto_atual in board_inicial:
-                valid = False
-            else:
-                superior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_superior_esquerda.append(ponto_atual)
-        # Se está na direita do tabuleiro
-        elif ponto_atual[0] > 6:
-            ponto_atual = (ponto_atual[0] - 1, ponto_atual[1])
-            if not ponto_atual in board_inicial:
-                valid = False
-            else:
-                superior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_superior_esquerda.append(ponto_atual)
+    # valid = True
+    # ponto_atual = ponto_inicial
+    # # Diagonal superior esquerda
+    # while valid:
+    #     # Se está no meio do tabuleiro ou na esquerda
+    #     if ponto_atual[0] == 6 or ponto_atual[0] < 6:
+    #         ponto_atual = (ponto_atual[0] - 1, ponto_atual[1] -1)
+    #         if not ponto_atual in board_inicial:
+    #             valid = False
+    #         else:
+    #             superior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
+    #             pontos_superior_esquerda.append(ponto_atual)
+    #     # Se está na direita do tabuleiro
+    #     elif ponto_atual[0] > 6:
+    #         ponto_atual = (ponto_atual[0] - 1, ponto_atual[1])
+    #         if not ponto_atual in board_inicial:
+    #             valid = False
+    #         else:
+    #             superior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
+    #             pontos_superior_esquerda.append(ponto_atual)
 
     valid = True
     ponto_atual = ponto_inicial
@@ -183,7 +183,7 @@ def diagonals(board_inicial, ponto_inicial, board):
                 valid = False
             else:
                 superior_direita.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_superior_direita.append(ponto_atual)
+                # pontos_superior_direita.append(ponto_atual)
         # Se está na esquerda do tabuleiro
         elif ponto_atual[0] < 6:
             ponto_atual = (ponto_atual[0] + 1, ponto_atual[1])
@@ -191,28 +191,28 @@ def diagonals(board_inicial, ponto_inicial, board):
                 valid = False
             else:
                 superior_direita.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_superior_direita.append(ponto_atual)
+                # pontos_superior_direita.append(ponto_atual)
 
-    valid = True
-    ponto_atual = ponto_inicial
-    # Diagonal inferior esquerda
-    while valid:
-        # Se está no meio do tabuleiro ou na esquerda
-        if ponto_atual[0] == 6 or ponto_atual[0] < 6:
-            ponto_atual = (ponto_atual[0] - 1, ponto_atual[1])
-            if not ponto_atual in board_inicial:
-                valid = False
-            else:
-                inferior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_inferior_esquerda.append(ponto_atual)
-        # Se está na direita do tabuleiro
-        elif ponto_atual[0] > 6:
-            ponto_atual = (ponto_atual[0] - 1, ponto_atual[1] + 1)
-            if not ponto_atual in board_inicial:
-                valid = False
-            else:
-                inferior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_inferior_esquerda.append(ponto_atual)
+    # valid = True
+    # ponto_atual = ponto_inicial
+    # # Diagonal inferior esquerda
+    # while valid:
+    #     # Se está no meio do tabuleiro ou na esquerda
+    #     if ponto_atual[0] == 6 or ponto_atual[0] < 6:
+    #         ponto_atual = (ponto_atual[0] - 1, ponto_atual[1])
+    #         if not ponto_atual in board_inicial:
+    #             valid = False
+    #         else:
+    #             inferior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
+    #             pontos_inferior_esquerda.append(ponto_atual)
+    #     # Se está na direita do tabuleiro
+    #     elif ponto_atual[0] > 6:
+    #         ponto_atual = (ponto_atual[0] - 1, ponto_atual[1] + 1)
+    #         if not ponto_atual in board_inicial:
+    #             valid = False
+    #         else:
+    #             inferior_esquerda.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
+    #             pontos_inferior_esquerda.append(ponto_atual)
 
     valid = True
     ponto_atual = ponto_inicial
@@ -225,7 +225,7 @@ def diagonals(board_inicial, ponto_inicial, board):
                 valid = False
             else:
                 inferior_direita.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_inferior_direita.append(ponto_atual)
+                # pontos_inferior_direita.append(ponto_atual)
         # Se está na esquerda do tabuleiro
         elif ponto_atual[0] < 6:
             ponto_atual = (ponto_atual[0] + 1, ponto_atual[1] + 1)
@@ -233,23 +233,24 @@ def diagonals(board_inicial, ponto_inicial, board):
                 valid = False
             else:
                 inferior_direita.append(board[ponto_atual[0] -1][ponto_atual[1] - 1])
-                pontos_inferior_direita.append(ponto_atual)
+                # pontos_inferior_direita.append(ponto_atual)
 
-    print('Superior Esquerda: ')
-    print('\t Conteúdo: ' + str(superior_esquerda))
-    print('\t Pontos: ' + str(pontos_superior_esquerda))
-    print('Superior Direita: ')
-    print('\t Conteúdo: ' + str(superior_direita))
-    print('\t Pontos: ' + str(pontos_superior_direita))
-    print('Inferior Esquerda: ')
-    print('\t Conteúdo: ' + str(inferior_esquerda))
-    print('\t Pontos: ' + str(pontos_inferior_esquerda))
-    print('Inferior Direita: ')
-    print('\t Conteúdo: ' + str(inferior_direita))
-    print('\t Pontos: ' + str(pontos_inferior_direita))
-    return [superior_esquerda,
+    # print('Superior Esquerda: ')
+    # print('\t Conteúdo: ' + str(superior_esquerda))
+    # print('\t Pontos: ' + str(pontos_superior_esquerda))
+    # print('Superior Direita: ')
+    # print('\t Conteúdo: ' + str(superior_direita))
+    # print('\t Pontos: ' + str(pontos_superior_direita))
+    # print('Inferior Esquerda: ')
+    # print('\t Conteúdo: ' + str(inferior_esquerda))
+    # print('\t Pontos: ' + str(pontos_inferior_esquerda))
+    # print('Inferior Direita: ')
+    # print('\t Conteúdo: ' + str(inferior_direita))
+    # print('\t Pontos: ' + str(pontos_inferior_direita))
+    return [
+            # superior_esquerda,
            superior_direita,
-           inferior_esquerda,
+            #  inferior_esquerda,
            inferior_direita]
 
 
@@ -357,7 +358,7 @@ def heuristic(board, player):
     for diag in upper_diags:
 
       # Pega toda a diagonal superior
-      diag_values = diagonals(get_board(), diag, board)[1]
+      diag_values = diagonals(get_board(), diag, board)[0]
 
       # ---- Player 1
       # Se a coluna possui alguma peça da sua cor
@@ -442,7 +443,7 @@ def heuristic(board, player):
     for diag in down_diags:
 
       # Pega toda a diagonal inferior
-      diag_values = diagonals(get_board(), diag, board)[3]
+      diag_values = diagonals(get_board(), diag, board)[1]
 
       # ---- Player 1
       # Se a coluna possui alguma peça da sua cor
@@ -526,7 +527,7 @@ def heuristic(board, player):
     player1_score = 0
     for seq_size, sequences in player_1.items():
       for seq in sequences:
-        print(seq)
+        # print(seq)
         start, end = seq['start'], seq['end']
         if start == 0:
           start = 1
@@ -553,8 +554,8 @@ def heuristic(board, player):
           end = 0
         player2_score += seq_size * (start + end)
 
-    print("Jogador 1: " + str(player1_score))
-    print("Jogador 2: " + str(player2_score))
+    # print("Jogador 1: " + str(player1_score))
+    # print("Jogador 2: " + str(player2_score))
     # print("Jogador 1: " + str(player_1))
     # print("Jogador 2: " + str(player_2))
 
@@ -653,6 +654,7 @@ while not done:
     # Se for a vez do jogador
     if player_turn==player:
         time.sleep(1)
+        
 
         # Pega os movimentos possiveis
         resp = urllib.request.urlopen("%s/movimentos" % host)
@@ -670,6 +672,7 @@ while not done:
         # movimento = random.choice(movimentos)
         # movimento = (10, movimento)
 
+        start_time = time.time()
         if must_remove:
            movimento = random.choice(movimentos)
            movimento = (0, movimento)
@@ -678,6 +681,8 @@ while not done:
         else:
            movimento = alpha_beta_pruning(board, len(movimentos), str(player), len(movimentos), str(player), forbidden_move)
            print(movimento)
+        end_time = time.time()
+        print('Tempo computando movimento: ' + str(end_time - start_time))
 
         # Executa o movimento
         resp = urllib.request.urlopen("%s/move?player=%d&coluna=%d&linha=%d" % (host,player,movimento[1][0],movimento[1][1]))
