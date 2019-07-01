@@ -299,7 +299,7 @@ def heuristic(board, player):
               if point - 1 >= 0:
                 start = board[col][point - 1]
               else:
-                start = 0
+                start = 2
           # Ao detectar uma peça que não é do jogador
           else:
             # Define variável end do final da sequencia\
@@ -334,7 +334,7 @@ def heuristic(board, player):
               if point - 1 >= 0:
                 start = board[col][point - 1]
               else:
-                start = 0
+                start = 1
           # Ao detectar uma peça que não é do jogador
           else:
             # Define variável end do final da sequencia\
@@ -382,7 +382,7 @@ def heuristic(board, player):
               if i - 1 >= 0:
                 start = previous
               else:
-                start = 0
+                start = 2
           # Ao detectar uma peça que não é do jogador
           else:
             # Define variável end do final da sequencia\
@@ -421,7 +421,7 @@ def heuristic(board, player):
               if i - 1 >= 0:
                 start = previous
               else:
-                start = 0
+                start = 1
           # Ao detectar uma peça que não é do jogador
           else:
             # Define variável end do final da sequencia\
@@ -467,7 +467,7 @@ def heuristic(board, player):
               if i - 1 >= 0:
                 start = previous
               else:
-                start = 0
+                start = 2
           # Ao detectar uma peça que não é do jogador
           else:
             # Define variável end do final da sequencia\
@@ -506,7 +506,7 @@ def heuristic(board, player):
               if i - 1 >= 0:
                 start = previous
               else:
-                start = 0
+                start = 1
           # Ao detectar uma peça que não é do jogador
           else:
             # Define variável end do final da sequencia\
@@ -537,7 +537,17 @@ def heuristic(board, player):
           end = 1
         else:
           end = 0
-        player1_score += seq_size * (start + end)
+        score = (start + end) * seq_size
+        # Venceu
+        if start == 0 and end == 0 and seq_size == 4:
+          score = 999
+        # Venceu
+        elif seq_size == 4 and (start == 0 or end == 0) and player == '2':
+          score == 999
+        # Venceu
+        elif seq_size == 5:
+          seq_size = 999
+        player1_score += score
 
     # Sum points for player_2
     player2_score = 0
@@ -552,14 +562,24 @@ def heuristic(board, player):
           end = 1
         else:
           end = 0
-        player2_score += seq_size * (start + end)
+        score = (start + end) * seq_size
+        # Venceu
+        if start == 0 and end == 0 and seq_size == 4:
+          score = 999
+        # Venceu
+        elif seq_size == 4 and (start == 0 or end == 0) and player == '1':
+          score == 999
+        # Venceu
+        elif seq_size == 5:
+          seq_size = 999
+        player2_score += score
 
     # print("Jogador 1: " + str(player1_score))
     # print("Jogador 2: " + str(player2_score))
     # print("Jogador 1: " + str(player_1))
     # print("Jogador 2: " + str(player_2))
 
-    if player == 1:
+    if player == '1':
       player2_score *= -1
     else:
       player1_score *= -1
@@ -653,8 +673,7 @@ while not done:
 
     # Se for a vez do jogador
     if player_turn==player:
-        time.sleep(1)
-        
+        time.sleep(0.2)
 
         # Pega os movimentos possiveis
         resp = urllib.request.urlopen("%s/movimentos" % host)
@@ -672,6 +691,7 @@ while not done:
         # movimento = random.choice(movimentos)
         # movimento = (10, movimento)
 
+        print('Status Atual: ' + str(heuristic(board, str(player))))
         start_time = time.time()
         if must_remove:
            movimento = random.choice(movimentos)
