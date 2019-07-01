@@ -136,7 +136,7 @@ def get_board():
     ]
 
 # Função que diz o que tem nas diagonais e seus pontos
-def teste_diagonais(board_inicial, ponto_inicial, board):
+def diagonals(board_inicial, ponto_inicial, board):
 
     print('Ponto Atual')
     print(ponto_inicial)
@@ -247,30 +247,238 @@ def teste_diagonais(board_inicial, ponto_inicial, board):
     print('Inferior Direita: ')
     print('\t Conteúdo: ' + str(inferior_direita))
     print('\t Pontos: ' + str(pontos_inferior_direita))
+    return [superior_esquerda,
+           superior_direita,
+           inferior_esquerda,
+           inferior_direita]
 
 
 # ------------- Métodos de tomada de decisão ----------
 
 # Função de heurística básica
 def heuristic(board, player):
-    # Verifica vertical
+
+    # Score hashes
+    player_1 ={
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: []
+    }
+
+    player_2 ={
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: []
+    }
+
+
+    # ---- Verifica vertical
     for col in range(0, len(board)):
-        if player == "1":
-            if board[col].count(1) + board[col].count(0) <= 5:
-                if board[col].count(2) + board[col].count(0) >=5:
-                    return 10
-                else:
-                    return -10
+      # ---- Player 1
+      # Se a coluna possui alguma peça da sua cor
+      if board[col].count(1) > 0:
+        # Percorre a coluna
+        current = None
+        seq_size = 0
+        for point in range(0, len(board[col])):
+          # Updates previous and current
+          previous = current
+          current = board[col][point]
+          # Ao detectar uma peça do jogador
+          if current == 1:
+            # Soma um no tamanho da sequência
+            seq_size += 1
+  	        # Se é o primeiro ponto da sequência, inicializa início
+            if previous != 1:
+              # Inicializa ponto de início da sequência
+              if point - 1 >= 0:
+                start = board[col][point - 1]
+              else:
+                start = 0
+          # Ao detectar uma peça que não é do jogador
+          else:
+            # Define variável end do final da sequencia\
+            end = current
+            # Salva sequencia se ela existir
+            if seq_size > 0:
+              # Adiciona no dict de score
+              player_1[seq_size].append({
+                'start': start,
+                'end': end
+              })
+              # Zera seq_size
+              seq_size = 0
 
-        if player == "2":
-            if board[col].count(2) + board[col].count(0) <= 5:
-                if board[col].count(1) + board[col].count(0) >=5:
-                    return -10
-                else:
-                    return 10
+      # ---- Player 2
+      # Se a coluna possui alguma peça da sua cor
+      if board[col].count(2) > 0:
+        # Percorre a coluna
+        current = None
+        seq_size = 0
+        for point in range(0, len(board[col])):
+          # Updates previous and current
+          previous = current
+          current = board[col][point]
+          # Ao detectar uma peça do jogador
+          if current == 2:
+            # Soma um no tamanho da sequência
+            seq_size += 1
+  	        # Se é o primeiro ponto da sequência, inicializa início
+            if previous != 2:
+              # Inicializa ponto de início da sequência
+              if point - 1 >= 0:
+                start = board[col][point - 1]
+              else:
+                start = 0
+          # Ao detectar uma peça que não é do jogador
+          else:
+            # Define variável end do final da sequencia\
+            end = current
+            # Salva sequencia se ela existir
+            if seq_size > 0:
+              # Adiciona no dict de score
+              player_2[seq_size].append({
+                'start': start,
+                'end': end
+              })
+              # Zera seq_size
+              seq_size = 0
 
-     #TODO verificar as diagonais
-    return 0
+
+    # ---- Verifica Upper diags
+    upper_diags = [
+      (0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
+      (1, 5), (2, 6), (3, 7), (4, 8), (5, 9)
+    ]
+    for diag in upper_diags:
+
+      # Pega toda a diagonal superior
+      diag_values = diagonals(get_board(), diag, board)[1]
+
+      # ---- Player 1
+      # Se a coluna possui alguma peça da sua cor
+      if diag_values.count(1) > 0:
+        # Percorre a coluna
+        current = None
+        seq_size = 0
+        # Index to keep track of array position
+        i = 0
+        for point in diag_values:
+          # Updates previous and current
+          previous = current
+          current = point
+          # Ao detectar uma peça do jogador
+          if current == 1:
+            # Soma um no tamanho da sequência
+            seq_size += 1
+  	        # Se é o primeiro ponto da sequência, inicializa início
+            if previous != 1:
+              # Inicializa ponto de início da sequência
+              if i - 1 >= 0:
+                start = previous
+              else:
+                start = 0
+          # Ao detectar uma peça que não é do jogador
+          else:
+            # Define variável end do final da sequencia\
+            end = current
+            # Salva sequencia se ela existir
+            if seq_size > 0:
+              # Adiciona no dict de score
+              player_1[seq_size].append({
+                'start': start,
+                'end': end
+              })
+              # Zera seq_size
+              seq_size = 0
+          i += 1
+          # Se tem pelo menos uma peça desse jogador na diagonal
+
+      # ---- Player 2
+      # Se a coluna possui alguma peça da sua cor
+      if diag_values.count(2) > 0:
+        # Percorre a coluna
+        current = None
+        seq_size = 0
+        # Index to keep track of array position
+        i = 0
+        for point in diag_values:
+          # Updates previous and current
+          previous = current
+          current = point
+          # Ao detectar uma peça do jogador
+          if current == 2:
+            # Soma um no tamanho da sequência
+            seq_size += 1
+  	        # Se é o primeiro ponto da sequência, inicializa início
+            if previous != 2:
+              # Inicializa ponto de início da sequência
+              if i - 1 >= 0:
+                start = previous
+              else:
+                start = 0
+          # Ao detectar uma peça que não é do jogador
+          else:
+            # Define variável end do final da sequencia\
+            end = current
+            # Salva sequencia se ela existir
+            if seq_size > 0:
+              # Adiciona no dict de score
+              player_2[seq_size].append({
+                'start': start,
+                'end': end
+              })
+              # Zera seq_size
+              seq_size = 0
+          i += 1
+
+    # ---- Compute points
+    # Sum points for player_1
+    player1_score = 0
+    for seq_size, sequences in player_1.items():
+      for seq in sequences:
+        print(seq)
+        start, end = seq['start'], seq['end']
+        if start == 0:
+          start = 1
+        else:
+          start = 0
+        if end == 0:
+          end = 1
+        else:
+          end = 0
+        player1_score += seq_size * (start + end)
+
+    # Sum points for player_2
+    player2_score = 0
+    for seq_size, sequences in player_2.items():
+      for seq in sequences:
+        start, end = seq['start'], seq['end']
+        if start == 0:
+          start = 1
+        else:
+          start = 0
+        if end == 0:
+          end = 1
+        else:
+          end = 0
+        player2_score += seq_size * (start + end)
+
+    print("Jogador 1: " + str(player1_score))
+    print("Jogador 2: " + str(player2_score))
+    # print("Jogador 1: " + str(player_1))
+    # print("Jogador 2: " + str(player_2))
+
+    if player == 1:
+      player2_score *= -1
+    else:
+      player1_score *= -1
+
+    return player1_score + player2_score
 
 # Método que faz um minimax com poda alpha beta, e escolhe o próximo movimento
 def alpha_beta_pruning(board, depth, player, initial_depth, initial_player, forbidden_move, alpha= -inf, beta = inf):
@@ -374,18 +582,17 @@ while not done:
 
         # Escolhe um movimento com heurística, a não ser que precise remover, se precisar remove aleatóriamente
 
-        movimento = random.choice(movimentos)
-        teste_diagonais(initial_board, movimento, board)
-        movimento = (10, movimento)
+        # movimento = random.choice(movimentos)
+        # movimento = (10, movimento)
 
-        #if must_remove:
-        #    movimento = random.choice(movimentos)
-        #    movimento = (0, movimento)
-        #    print(movimento)
-        #    must_remove = False
-        #else:
-         #   movimento = alpha_beta_pruning(board, len(movimentos), str(player), len(movimentos), str(player), forbidden_move)
-          #  print(movimento)
+        if must_remove:
+           movimento = random.choice(movimentos)
+           movimento = (0, movimento)
+           print(movimento)
+           must_remove = False
+        else:
+           movimento = alpha_beta_pruning(board, len(movimentos), str(player), len(movimentos), str(player), forbidden_move)
+           print(movimento)
 
         # Executa o movimento
         resp = urllib.request.urlopen("%s/move?player=%d&coluna=%d&linha=%d" % (host,player,movimento[1][0],movimento[1][1]))
