@@ -436,6 +436,91 @@ def heuristic(board, player):
               seq_size = 0
           i += 1
 
+    # ---- Verifica Down diags
+    down_diags = [(5, 0), (4, 0), (3, 0), (2, 0), (1, 0),
+                 (0, 0), (0, 1), (0, 2), (0, 3), (0, 4)]
+    for diag in down_diags:
+
+      # Pega toda a diagonal inferior
+      diag_values = diagonals(get_board(), diag, board)[3]
+
+      # ---- Player 1
+      # Se a coluna possui alguma peça da sua cor
+      if diag_values.count(1) > 0:
+        # Percorre a coluna
+        current = None
+        seq_size = 0
+        # Index to keep track of array position
+        i = 0
+        for point in diag_values:
+          # Updates previous and current
+          previous = current
+          current = point
+          # Ao detectar uma peça do jogador
+          if current == 1:
+            # Soma um no tamanho da sequência
+            seq_size += 1
+  	        # Se é o primeiro ponto da sequência, inicializa início
+            if previous != 1:
+              # Inicializa ponto de início da sequência
+              if i - 1 >= 0:
+                start = previous
+              else:
+                start = 0
+          # Ao detectar uma peça que não é do jogador
+          else:
+            # Define variável end do final da sequencia\
+            end = current
+            # Salva sequencia se ela existir
+            if seq_size > 0:
+              # Adiciona no dict de score
+              player_1[seq_size].append({
+                'start': start,
+                'end': end
+              })
+              # Zera seq_size
+              seq_size = 0
+          i += 1
+          # Se tem pelo menos uma peça desse jogador na diagonal
+
+      # ---- Player 2
+      # Se a coluna possui alguma peça da sua cor
+      if diag_values.count(2) > 0:
+        # Percorre a coluna
+        current = None
+        seq_size = 0
+        # Index to keep track of array position
+        i = 0
+        for point in diag_values:
+          # Updates previous and current
+          previous = current
+          current = point
+          # Ao detectar uma peça do jogador
+          if current == 2:
+            # Soma um no tamanho da sequência
+            seq_size += 1
+  	        # Se é o primeiro ponto da sequência, inicializa início
+            if previous != 2:
+              # Inicializa ponto de início da sequência
+              if i - 1 >= 0:
+                start = previous
+              else:
+                start = 0
+          # Ao detectar uma peça que não é do jogador
+          else:
+            # Define variável end do final da sequencia\
+            end = current
+            # Salva sequencia se ela existir
+            if seq_size > 0:
+              # Adiciona no dict de score
+              player_2[seq_size].append({
+                'start': start,
+                'end': end
+              })
+              # Zera seq_size
+              seq_size = 0
+          i += 1
+
     # ---- Compute points
     # Sum points for player_1
     player1_score = 0
