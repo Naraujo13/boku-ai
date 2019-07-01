@@ -142,9 +142,9 @@ def diagonals(board_inicial, ponto_inicial, board):
     # print(ponto_inicial)
     # Conteúdo das diagonais
     # superior_esquerda = []
-    superior_direita = []
+    superior_direita = [board[ponto_inicial[0] -1][ponto_inicial[1] - 1]]
     # inferior_esquerda = []
-    inferior_direita = []
+    inferior_direita = [board[ponto_inicial[0] -1][ponto_inicial[1] - 1]]
     # Pontos das diagonais
     # pontos_superior_esquerda = []
     # pontos_superior_direita = []
@@ -255,10 +255,12 @@ def diagonals(board_inicial, ponto_inicial, board):
 
 
 # ------------- Métodos de tomada de decisão ----------
-
+# num_h = 0
 # Função de heurística básica
 def heuristic(board, player):
-
+    # global num_h
+    # num_h += 1
+    # print("Num: " + str(num_h))
     # Score hashes
     player_1 ={
       1: [],
@@ -352,8 +354,8 @@ def heuristic(board, player):
 
     # ---- Verifica Upper diags
     upper_diags = [
-      (0, 0), (0, 1), (0, 2), (0, 3), (0, 4),
-      (1, 5), (2, 6), (3, 7), (4, 8), (5, 9)
+      (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
+      (2, 6), (3, 7), (4, 8), (5, 9), (6, 10)
     ]
     for diag in upper_diags:
 
@@ -438,8 +440,8 @@ def heuristic(board, player):
           i += 1
 
     # ---- Verifica Down diags
-    down_diags = [(5, 0), (4, 0), (3, 0), (2, 0), (1, 0),
-                 (0, 0), (0, 1), (0, 2), (0, 3), (0, 4)]
+    down_diags = [(6, 1), (5, 1), (4, 1), (3, 1), (2, 1),
+                 (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)]
     for diag in down_diags:
 
       # Pega toda a diagonal inferior
@@ -544,7 +546,9 @@ def heuristic(board, player):
         # Venceu
         elif seq_size == 4 and (start == 0 or end == 0) and player == '2':
           score == 999
-        # Venceu
+        # Maybe won
+        elif seq_size == 3 and start == 0 and end == 0 and player == '2':
+          score = 50
         elif seq_size == 5:
           seq_size = 999
         player1_score += score
@@ -569,25 +573,27 @@ def heuristic(board, player):
         # Venceu
         elif seq_size == 4 and (start == 0 or end == 0) and player == '1':
           score == 999
+        # Maybe won
+        elif seq_size == 3 and start == 0 and end == 0 and player == '2':
+          score = 50
         # Venceu
         elif seq_size == 5:
           seq_size = 999
         player2_score += score
-
-    # print("Jogador 1: " + str(player1_score))
-    # print("Jogador 2: " + str(player2_score))
-    # print("Jogador 1: " + str(player_1))
-    # print("Jogador 2: " + str(player_2))
 
     if player == '1':
       player2_score *= -1
     else:
       player1_score *= -1
 
+    print("Score: " + str(player1_score + player2_score) + " | Jogador 1: " + str(player1_score) + " | Jogador 2: " + str(player2_score))
+    # print("Jogador 1: " + str(player_1))
+    # print("Jogador 2: " + str(player_2))
+
     return player1_score + player2_score
 
 # Método que faz um minimax com poda alpha beta, e escolhe o próximo movimento
-def alpha_beta_pruning(board, depth, player, initial_depth, initial_player, forbidden_move, alpha= -inf, beta = inf):
+def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_player, forbidden_move, alpha= -inf, beta = inf):
 
     # Checa se chegou ao objetivo
     final_state = is_final_state(board)
@@ -603,20 +609,24 @@ def alpha_beta_pruning(board, depth, player, initial_depth, initial_player, forb
         return h, board
 
     # Para o primeiro jogador
-    if player == '1':
+    if player == oponent:
         best_val = inf
         best_mov = None
         for move in get_available_moves(board, '1', forbidden_move):
+            print("Move " + str(move))
             board_cpy = copy.deepcopy(board)
             column, line = move
             board_cpy[column-1][line-1] = 1
-            value, _ = alpha_beta_pruning(board_cpy, depth-1, '2', initial_depth, initial_player, forbidden_move, alpha, beta)
+            value, _ = alpha_beta_pruning(board_cpy, depth-1, '2', oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
+            print("Value " + str(value))
             if best_val > value:
                 best_mov = move
 
             best_val = min(value, best_val)
-            beta = min(alpha, best_val)
+            beta = min(beta, best_val)
             if alpha >= beta:
+                print ("BestVal(" + str(best_val) + ")")
+                print ("Alpha(" + str(alpha) + ") > Beta(" + str(beta) + ") break")
                 break
         return best_val, best_mov
 
@@ -628,13 +638,14 @@ def alpha_beta_pruning(board, depth, player, initial_depth, initial_player, forb
             board_cpy = copy.deepcopy(board)
             column, line = move
             board_cpy[column-1][line-1] = 2
-            value, _ = alpha_beta_pruning(board_cpy, depth-1, '1', initial_depth, initial_player, forbidden_move, alpha, beta)
+            value, _ = alpha_beta_pruning(board_cpy, depth-1, '1', oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
             if best_val < value:
                 best_mov = move
 
             best_val = max(value, best_val)
             alpha = max(alpha, best_val)
             if alpha >= beta:
+                print ("Alpha > Beta break")
                 break
         return best_val, best_mov
 
@@ -673,7 +684,7 @@ while not done:
 
     # Se for a vez do jogador
     if player_turn==player:
-        time.sleep(0.2)
+        time.sleep(1)
 
         # Pega os movimentos possiveis
         resp = urllib.request.urlopen("%s/movimentos" % host)
@@ -691,16 +702,20 @@ while not done:
         # movimento = random.choice(movimentos)
         # movimento = (10, movimento)
 
-        print('Status Atual: ' + str(heuristic(board, str(player))))
+        print('Status Antes: ' + str(heuristic(board, str(player))))
         start_time = time.time()
         if must_remove:
-           movimento = random.choice(movimentos)
-           movimento = (0, movimento)
-           print(movimento)
-           must_remove = False
+          movimento = random.choice(movimentos)
+          movimento = (0, movimento)
+          print(movimento)
+          must_remove = False
         else:
-           movimento = alpha_beta_pruning(board, len(movimentos), str(player), len(movimentos), str(player), forbidden_move)
-           print(movimento)
+          if player == 1:
+              oponent = 2
+          else:
+              oponent = 1
+          movimento = alpha_beta_pruning(board, len(movimentos), str(player), str(oponent), len(movimentos), str(player), forbidden_move)
+          print(movimento)
         end_time = time.time()
         print('Tempo computando movimento: ' + str(end_time - start_time))
 
@@ -719,6 +734,9 @@ while not done:
             done = True
         if msg[0]<0:
             raise Exception(msg[1])
+        resp = urllib.request.urlopen("%s/tabuleiro" % host)
+        board = eval(resp.read())
+        print('Status Depois: ' + str(heuristic(board, str(player))))
 
     # Descansa um pouco para nao inundar o servidor com requisicoes
     time.sleep(1)
