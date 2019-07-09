@@ -269,7 +269,7 @@ def tuples_to_board(tuples):
 # ------------- Métodos de tomada de decisão ----------
 # num_h = 0
 # Função de heurística básica
-@lru_cache(maxsize=131072)
+# @lru_cache(maxsize=131072)
 def heuristic(board, player, debug = False):
     board = tuples_to_board(board)
 
@@ -637,7 +637,7 @@ def heuristic(board, player, debug = False):
     return player1_score + player2_score
 
 # Método que faz um minimax com poda alpha beta, e escolhe o próximo movimento
-@lru_cache(maxsize=131072)
+# @lru_cache(maxsize=131072)
 def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_player, forbidden_move, alpha= -inf, beta = inf):
 
     board = tuples_to_board(board)
@@ -652,7 +652,7 @@ def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_pla
             return -inf, board
 
     # Encerra quando descer até uma certa profundidade, armazenada em max_depth
-    max_depth = 4
+    max_depth = 2
     if depth == initial_depth - max_depth:
         h = heuristic(board_to_tuple(board), initial_player)
         return h, board
@@ -787,7 +787,7 @@ while not done:
         # movimento = random.choice(movimentos)
         # movimento = (10, movimento)
 
-        print('Status Antes: ' + str(heuristic(board_to_tuple(board), str(player))))
+        # print('Status Antes: ' + str(heuristic(board_to_tuple(board), str(player))))
         start_time = time.time()
         if must_remove:
           movimento = random.choice(movimentos)
@@ -803,8 +803,8 @@ while not done:
           print(movimento)
         end_time = time.time()
         print('Tempo computando movimento: ' + str(end_time - start_time))
-        print("Heuristic stats: " + str(heuristic.cache_info()))
-        print("Minimax stats: " + str(alpha_beta_pruning.cache_info()))
+        # print("Heuristic stats: " + str(heuristic.cache_info()))
+        # print("Minimax stats: " + str(alpha_beta_pruning.cache_info()))
 
         # Executa o movimento
         resp = urllib.request.urlopen("%s/move?player=%d&coluna=%d&linha=%d" % (host,player,movimento[1][0],movimento[1][1]))
@@ -823,7 +823,7 @@ while not done:
             raise Exception(msg[1])
         resp = urllib.request.urlopen("%s/tabuleiro" % host)
         board = eval(resp.read())
-        print('Status Depois: ' + str(heuristic(board_to_tuple(board), str(player), False)))
+        # print('Status Depois: ' + str(heuristic(board_to_tuple(board), str(player), False)))
 
     # Descansa um pouco para nao inundar o servidor com requisicoes
     time.sleep(1)
