@@ -539,18 +539,24 @@ def heuristic(board, player):
           end = 1
         else:
           end = 0
-        score = (start + end) * seq_size
-        # Venceu
-        if start == 0 and end == 0 and seq_size == 4:
-          score = 999
-        # Venceu
-        elif seq_size == 4 and (start == 0 or end == 0) and player == '2':
-          score == 999
-        # Maybe won
-        elif seq_size == 3 and start == 0 and end == 0 and player == '2':
-          score = 50
+        any_empty_spot = (start + end)
+        if any_empty_spot > 0:
+          any_empty_spot = 1
+        if (start + end) == 2:
+          bonus = 2
+        else:
+          bonus = 1
+        score = (any_empty_spot * seq_size) + bonus
+        # Caso de 1
+        if seq_size == 1:
+          score = score % 2
+        # Player 1 venceu
+        elif start == 0 and end == 0 and seq_size == 4 and player == '2':
+          score = 99999
+        elif start == 0 and end == 0 and seq_size == 3 and player == '2':
+          seq_size = 55555
         elif seq_size == 5:
-          seq_size = 999
+          seq_size = 99999
         player1_score += score
 
     # Sum points for player_2
@@ -566,19 +572,24 @@ def heuristic(board, player):
           end = 1
         else:
           end = 0
-        score = (start + end) * seq_size
-        # Venceu
-        if start == 0 and end == 0 and seq_size == 4:
-          score = 999
-        # Venceu
-        elif seq_size == 4 and (start == 0 or end == 0) and player == '1':
-          score == 999
-        # Maybe won
-        elif seq_size == 3 and start == 0 and end == 0 and player == '2':
-          score = 50
-        # Venceu
+        any_empty_spot = (start + end)
+        if any_empty_spot > 0:
+          any_empty_spot = 1
+        if (start + end) == 2:
+          bonus = 2
+        else:
+          bonus = 1
+        score = (any_empty_spot * seq_size) + bonus
+        # Caso de 1
+        if seq_size == 1:
+          score = score % 2
+        # Player 2 venceu
+        elif start == 0 and end == 0 and seq_size == 4 and player == '1':
+          score = 99999
+        elif start == 0 and end == 0 and seq_size == 3 and player == '1':
+          seq_size = 55555
         elif seq_size == 5:
-          seq_size = 999
+          seq_size = 99999
         player2_score += score
 
     if player == '1':
@@ -586,7 +597,7 @@ def heuristic(board, player):
     else:
       player1_score *= -1
 
-    print("Score: " + str(player1_score + player2_score) + " | Jogador 1: " + str(player1_score) + " | Jogador 2: " + str(player2_score))
+    # print("Score: " + str(player1_score + player2_score) + " | Jogador 1: " + str(player1_score) + " | Jogador 2: " + str(player2_score))
     # print("Jogador 1: " + str(player_1))
     # print("Jogador 2: " + str(player_2))
 
@@ -598,56 +609,93 @@ def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_pla
     # Checa se chegou ao objetivo
     final_state = is_final_state(board)
     if final_state is not None:
-        if final_state == 1:
-            return -10, board
+        if final_state == player:
+            return inf, board
         else:
-            return 10, board
+            return -inf, board
 
-    # Encerra quando descer até uma certa profundidade, neste caso 2
-    if depth == initial_depth - 2:
+    # Encerra quando descer até uma certa profundidade, armazenada em max_depth
+    max_depth = 2
+    if depth == initial_depth - max_depth:
         h = heuristic(board, initial_player)
         return h, board
 
-    # Para o primeiro jogador
+    # Para o oponente - faz min
     if player == oponent:
-        best_val = inf
         best_mov = None
-        for move in get_available_moves(board, '1', forbidden_move):
-            print("Move " + str(move))
-            board_cpy = copy.deepcopy(board)
+        value = inf
+        for move in get_available_moves(board, player, forbidden_move):
+            # print("Move " + str(move))
+
+            # Copies board
+            board_cpy = copy.deepcopy(board)\
+
+            # Makes move
             column, line = move
-            board_cpy[column-1][line-1] = 1
-            value, _ = alpha_beta_pruning(board_cpy, depth-1, '2', oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
-            print("Value " + str(value))
-            if best_val > value:
-                best_mov = move
+            board_cpy[column-1][line-1] = int(player)
 
-            best_val = min(value, best_val)
-            beta = min(beta, best_val)
+            # Gets next player
+            if player == '1':
+              next_player = '2'
+            else:
+              next_player = '1'
+
+            # Gets heuristic of next moves calling recursion
+            new_value, _ = alpha_beta_pruning(board_cpy, depth-1, next_player, oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
+            # print("Value " + str(value))
+
+            # If new_value is the best, update it and stores move
+            if new_value < value or best_mov = None:
+              value = new_value
+              best_mov = move
+
+            # Updates beta
+            beta = min(beta, value)
+
+            # Prunning
             if alpha >= beta:
-                print ("BestVal(" + str(best_val) + ")")
-                print ("Alpha(" + str(alpha) + ") > Beta(" + str(beta) + ") break")
+                # print ("BestVal(" + str(best_val) + ")")
+                # print ("Alpha(" + str(alpha) + ") > Beta(" + str(beta) + ") break")
                 break
-        return best_val, best_mov
-
-    # Para o segundo jogador
+        return value, best_mov
+    # Para o jogador principal
     else:
-        best_val = -inf
         best_mov = None
-        for move in get_available_moves(board, '2', forbidden_move):
-            board_cpy = copy.deepcopy(board)
-            column, line = move
-            board_cpy[column-1][line-1] = 2
-            value, _ = alpha_beta_pruning(board_cpy, depth-1, '1', oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
-            if best_val < value:
-                best_mov = move
+        value = -inf
+        for move in get_available_moves(board, player, forbidden_move):
+            # print("Move " + str(move))
 
-            best_val = max(value, best_val)
-            alpha = max(alpha, best_val)
+            # Copies board
+            board_cpy = copy.deepcopy(board)\
+
+            # Makes move
+            column, line = move
+            board_cpy[column-1][line-1] = int(player)
+
+            # Gets next player
+            if player == '1':
+              next_player = '2'
+            else:
+              next_player = '1'
+
+            # Gets heuristic of next moves calling recursion
+            new_value, _ = alpha_beta_pruning(board_cpy, depth-1, next_player, oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
+            # print("Value " + str(value))
+
+            # If new_value is the best, update it and stores move
+            if new_value > value or best_mov = None:
+              value = new_value
+              best_mov = move
+
+            # Updates alpha
+            alpha = max(alpha, value)
+
+            # Prunning
             if alpha >= beta:
-                print ("Alpha > Beta break")
+                # print ("BestVal(" + str(best_val) + ")")
+                # print ("Alpha(" + str(alpha) + ") > Beta(" + str(beta) + ") break")
                 break
-        return best_val, best_mov
+        return value, best_mov
 
 # ----------------------------------------------------------------
 
