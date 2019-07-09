@@ -4,6 +4,7 @@ import random
 import time
 from math import inf
 import copy
+from functools import lru_cache
 
 # ---------------------------- Server methods ---------------------------------
 
@@ -253,11 +254,25 @@ def diagonals(board_inicial, ponto_inicial, board):
             #  inferior_esquerda,
            inferior_direita]
 
+def board_to_tuple(board):
+  tuples = list()
+  for column in board:
+    tuples.append(tuple(column))
+  return tuple(tuples)
+
+def tuples_to_board(tuples):
+  board = list()
+  for t in tuples:
+    board.append(list(t))
+  return board
 
 # ------------- Métodos de tomada de decisão ----------
 # num_h = 0
 # Função de heurística básica
-def heuristic(board, player):
+@lru_cache(maxsize=131072)
+def heuristic(board, player, debug = False):
+    board = tuples_to_board(board)
+
     # global num_h
     # num_h += 1
     # print("Num: " + str(num_h))
@@ -527,6 +542,8 @@ def heuristic(board, player):
     # ---- Compute points
     # Sum points for player_1
     player1_score = 0
+    if debug:
+      print("Player 1")
     for seq_size, sequences in player_1.items():
       for seq in sequences:
         # print(seq)
@@ -548,19 +565,28 @@ def heuristic(board, player):
           bonus = 1
         score = (any_empty_spot * seq_size) + bonus
         # Caso de 1
-        if seq_size == 1:
-          score = score % 2
+        if seq_size == 1 or seq_size == 2:
+          score = score % (seq_size + 1)
         # Player 1 venceu
-        elif start == 0 and end == 0 and seq_size == 4 and player == '2':
+        elif start == 1 and end == 1 and seq_size == 4:
           score = 99999
-        elif start == 0 and end == 0 and seq_size == 3 and player == '2':
-          seq_size = 55555
+        # Player 1 venceu
+        elif (start == 1 or end == 1) and seq_size == 4 and player == '2':
+          score = 99999
+        elif start == 1 and end == 1 and seq_size == 3 and player == '1':
+          score = 10
+        elif start == 1 and end == 1 and seq_size == 3 and player == '2':
+          score = 55555
         elif seq_size == 5:
-          seq_size = 99999
+          score = 99999
         player1_score += score
+        if debug:
+          print("Seq " + str(seq_size) + " - " + str(score))
 
     # Sum points for player_2
     player2_score = 0
+    if debug:
+      print("Player 2")
     for seq_size, sequences in player_2.items():
       for seq in sequences:
         start, end = seq['start'], seq['end']
@@ -581,16 +607,23 @@ def heuristic(board, player):
           bonus = 1
         score = (any_empty_spot * seq_size) + bonus
         # Caso de 1
-        if seq_size == 1:
-          score = score % 2
+        if seq_size == 1 or seq_size == 2:
+          score = score % (seq_size + 1)
         # Player 2 venceu
-        elif start == 0 and end == 0 and seq_size == 4 and player == '1':
+        elif start == 1 and end == 1 and seq_size == 4:
           score = 99999
-        elif start == 0 and end == 0 and seq_size == 3 and player == '1':
-          seq_size = 55555
+        # Player 2 venceu
+        elif (start == 1 or end == 1) and seq_size == 4 and player == '1':
+          score = 99999
+        elif start == 1 and end == 1 and seq_size == 3 and player == '2':
+          score = 10
+        elif start == 1 and end == 1 and seq_size == 3 and player == '1':
+          score = 55555
         elif seq_size == 5:
-          seq_size = 99999
+          score = 99999
         player2_score += score
+        if debug:
+          print("Seq " + str(seq_size) + " - " + str(score))
 
     if player == '1':
       player2_score *= -1
@@ -604,7 +637,11 @@ def heuristic(board, player):
     return player1_score + player2_score
 
 # Método que faz um minimax com poda alpha beta, e escolhe o próximo movimento
+@lru_cache(maxsize=131072)
 def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_player, forbidden_move, alpha= -inf, beta = inf):
+
+    board = tuples_to_board(board)
+    forbidden_move = list(forbidden_move)
 
     # Checa se chegou ao objetivo
     final_state = is_final_state(board)
@@ -615,9 +652,9 @@ def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_pla
             return -inf, board
 
     # Encerra quando descer até uma certa profundidade, armazenada em max_depth
-    max_depth = 2
+    max_depth = 4
     if depth == initial_depth - max_depth:
-        h = heuristic(board, initial_player)
+        h = heuristic(board_to_tuple(board), initial_player)
         return h, board
 
     # Para o oponente - faz min
@@ -641,11 +678,11 @@ def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_pla
               next_player = '1'
 
             # Gets heuristic of next moves calling recursion
-            new_value, _ = alpha_beta_pruning(board_cpy, depth-1, next_player, oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
+            new_value, _ = alpha_beta_pruning(board_to_tuple(board_cpy), depth-1, next_player, oponent, initial_depth, initial_player, tuple(forbidden_move), alpha, beta)
             # print("Value " + str(value))
 
             # If new_value is the best, update it and stores move
-            if new_value < value or best_mov = None:
+            if new_value < value or best_mov == None:
               value = new_value
               best_mov = move
 
@@ -679,11 +716,11 @@ def alpha_beta_pruning(board, depth, player, oponent, initial_depth, initial_pla
               next_player = '1'
 
             # Gets heuristic of next moves calling recursion
-            new_value, _ = alpha_beta_pruning(board_cpy, depth-1, next_player, oponent, initial_depth, initial_player, forbidden_move, alpha, beta)
+            new_value, _ = alpha_beta_pruning(board_to_tuple(board_cpy), depth-1, next_player, oponent, initial_depth, initial_player, tuple(forbidden_move), alpha, beta)
             # print("Value " + str(value))
 
             # If new_value is the best, update it and stores move
-            if new_value > value or best_mov = None:
+            if new_value > value or best_mov == None:
               value = new_value
               best_mov = move
 
@@ -750,7 +787,7 @@ while not done:
         # movimento = random.choice(movimentos)
         # movimento = (10, movimento)
 
-        print('Status Antes: ' + str(heuristic(board, str(player))))
+        print('Status Antes: ' + str(heuristic(board_to_tuple(board), str(player))))
         start_time = time.time()
         if must_remove:
           movimento = random.choice(movimentos)
@@ -762,10 +799,12 @@ while not done:
               oponent = 2
           else:
               oponent = 1
-          movimento = alpha_beta_pruning(board, len(movimentos), str(player), str(oponent), len(movimentos), str(player), forbidden_move)
+          movimento = alpha_beta_pruning(board_to_tuple(board), len(movimentos), str(player), str(oponent), len(movimentos), str(player), tuple(forbidden_move))
           print(movimento)
         end_time = time.time()
         print('Tempo computando movimento: ' + str(end_time - start_time))
+        print("Heuristic stats: " + str(heuristic.cache_info()))
+        print("Minimax stats: " + str(alpha_beta_pruning.cache_info()))
 
         # Executa o movimento
         resp = urllib.request.urlopen("%s/move?player=%d&coluna=%d&linha=%d" % (host,player,movimento[1][0],movimento[1][1]))
@@ -784,7 +823,7 @@ while not done:
             raise Exception(msg[1])
         resp = urllib.request.urlopen("%s/tabuleiro" % host)
         board = eval(resp.read())
-        print('Status Depois: ' + str(heuristic(board, str(player))))
+        print('Status Depois: ' + str(heuristic(board_to_tuple(board), str(player), False)))
 
     # Descansa um pouco para nao inundar o servidor com requisicoes
     time.sleep(1)
