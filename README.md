@@ -1,35 +1,42 @@
-Um motor, servidor, cliente e visualizador para jogar Boku feito em Python 3.
+A basic interface, a server and a cliente for the table game Boku (Bollox) made with Python 3.
 
-Nota: o Jupyter Notebook está deprecado.
+This is a fork from [Boku Engine](https://github.com/ricardoaraujo/boku-engine) and was developed as a task for the Artificial Intelligence Class of the Computer Science Masters Course at UFPel.
 
-## Requerimentos
+## Requirements
 * Python 3
 * Flask
 * Flask-SocketIO
 
-## Instalando Requisitos
+## Installing
 pip install -r requirements.txt
 
-## Executando
+## Executing
 
 ```
 ./python server.py
 ```
 
-Use um navegador para acessar o endereço `http://localhost:8080/visualizador.html`.
+Use a browser to access `http://localhost:8080/visualizador.html`.
 
-## Cliente
+## Client
 
-Um cliente que faz jogadas aleatórias está disponível (`random_client.py`). Para utilizá-lo, rode o servidor e execute o cliente passando como parâmetro o número do jogador (1 ou 2). Pode-se rodar dois clientes simultâneamente, cada um com um número de jogador. 
+### Random Client
+A simple client that makes random moves is available (`random_client.py`). To use it, run the server and then execute the client passing the player number (1 or 2) as an argument. You can run two clients simultaneosly, one with each player number.
+
+### Dumb Client
+A simple client that uses simple heuristics is available (`dumb_client.py`). To use it, run the server and then execute the client passing the player number (1 or 2) as an argument. You can run two clients simultaneosly, one with each player number.
+
+### Another Dumb Client
+A client that uses min-max with alpha-beta pruning and a LRU for optimizing recalculations is available (`another_dumb_client.py`). This client differentiates from the Dumb Client because the use of alpha-beta pruning and LRU allows the use of better heuristics that would be two costly without them.  To use it, run the server and then execute the client passing the player number (1 or 2) as an argument. You can run two clients simultaneosly, one with each player number.
 
 ## API
 
-A API ainda está em desenvolvimento. Estão disponíveis funcionalidades básicas, que são acessadas por http.
+The API is already in development. There is some basic funcionality available through http requests:
 
-* `/jogador`. Retorna o número do jogador de quem é a vez de jogar. Retorna 0 se o jogo acabou e o oponente venceu.
-* `/tabuleiro`. Retorna o estado atual do tabuleiro, na forma de lista de listas. Cada lista representa uma coluna. O valor `0` representa um espaço vazio, enquanto `1` representa o primeiro jogador e `2` representa os segundo jogador.
-* `/move?player=X&coluna=C&linha=L`. Coloca uma peça do jogador X na coluna C e linha L. Retorna uma tupla `(erro, msg)`. Se `erro<0`, `msg` conterá o erro ocorrido. Se `erro==0`, o movimento feito encerrou o jogo e o cliente venceu. 
-* `/reiniciar`. Reinicia o jogo, limpando o tabuleiro.
-* `/ultima_jogada`. Retorna a posição da última jogada realizada (coluna, linha).
-* `/movimentos`. Retorna uma lista de posições válidas (coluna,linha) onde o jogador atual pode colocar uma peça (ou remover uma peça do adversário).
-* `/num_movimentos`. Retorna o número de movimentos realizados desde o início do jogo.
+* `/jogador`. Returns the number of the player that it's the current turn to play. Returns 0 if the game is over and the opponent won.
+* `/tabuleiro`. Returns the current state of the board in the form of a list of lists. Each list represents a column, the value `0` represents an empty space, while `1` represents the first player and `2` the second.
+* `/move?player=X&coluna=C&linha=L`. Puts a pice from player X in the columns C and line L. Returns the tuple `(error, msg)`. If `error<0`, `msg` will contain the error. If `error==0`, the movement ended the game and the client won.
+* `/reiniciar`. Resets the game, cleaning the board..
+* `/ultima_jogada`. Returns the position of the last move made (column, line).
+* `/movimentos`. Return a list with all the positions (column, line) where the current player can make a valid move (place a piece or remove opponent piece).
+* `/num_movimentos`. Returns the number of movements made since the game started.
