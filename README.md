@@ -1,6 +1,6 @@
 A basic interface, a server and a cliente for the table game Boku (Bollox) made with Python 3.
 
-This is a fork from [Boku Engine](https://github.com/ricardoaraujo/boku-engine) and was developed as a task for the Artificial Intelligence Class of the Computer Science Masters Course at UFPel.
+This is a fork from [Boku Engine](https://github.com/ricardoaraujo/boku-engine) and was developed as a task for the Artificial Intelligence Class of 2019 for the Computer Science Masters Course at UFPel.
 
 ## Requirements
 * Python 3
